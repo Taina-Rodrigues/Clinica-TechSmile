@@ -1,0 +1,665 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TechSmile - Sistema Monolítico</title>
+  <style>
+    :root{
+      --blue:#0A3D91;
+      --green:#18B36D;
+      --bg:#f0f5f3;
+      --muted:#6b7280;
+      --card-border:#dce4e6;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: Inter, Arial, sans-serif;
+      background:var(--bg);
+      color:#111827;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+    }
+    /* header */
+    header{
+      background: linear-gradient(90deg, var(--blue), var(--green));
+      color:white;
+      padding:12px 20px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+    }
+    header .brand{display:flex;align-items:center;gap:12px}
+    header img{width:44px;height:44px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,0.12)}
+    header h1{font-size:18px;margin:0;font-weight:700}
+    nav a{color:white;margin-left:14px;text-decoration:none;font-weight:600}
+    nav button.link-like{background:none;border:0;color:white;margin-left:14px;cursor:pointer;font-weight:600}
+    /* main container */
+    main.container{
+      max-width:1100px;
+      margin:28px auto 140px;
+      width:calc(100% - 40px);
+      flex:1 0 auto;
+    }
+    .card{
+      background:#fff;border-radius:10px;padding:18px;border:1px solid var(--card-border);box-shadow:0 6px 18px rgba(15,23,42,0.04);
+    }
+    /* login box smaller */
+    #page-login.card{max-width:480px;margin:40px auto;padding:10px}
+    label{display:block;margin-top:10px;color:var(--muted);font-size:13px}
+    input,select,textarea{width:100%;padding:8px;border-radius:8px;border:1px solid #ced7df;margin-top:6px;font-size:14px}
+    button{background: linear-gradient(90deg,var(--blue),var(--green)); color:white; border:0; padding:8px 12px; border-radius:8px; cursor:pointer}
+    button:hover{opacity:.95}
+    .link-like{background:none;border:0;color:var(--blue);cursor:pointer;padding:6px}
+    .topline{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    table{width:100%;border-collapse:collapse;margin-top:8px}
+    th,td{padding:10px;border-bottom:1px solid #eef2f3;text-align:left}
+    th{background:#f2f8ff;color:var(--blue)}
+    .grid{display:grid;grid-template-columns:1fr 320px;gap:16px}
+    .muted{color:var(--muted)}
+    .hidden{display:none}
+    footer{
+      width:100%;
+      padding:14px 20px;
+      text-align:center;
+      font-size:14px;
+      color:white;
+      background: linear-gradient(90deg, var(--blue), var(--green));
+      position:fixed;
+      left:0;
+      bottom:0;
+    }
+    @media(max-width:900px){
+      .grid{grid-template-columns:1fr}
+      nav{display:none}
+      header{flex-direction:column;align-items:flex-start;gap:10px}
+      main.container{margin:18px auto 140px}
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <img src="logo_techsmile.png" alt="TechSmile Logo" id="logo-img" />
+    <h1>Clínica TechSmile</h1>
+  </div>
+
+  <nav id="main-nav">
+    <a href="#/dashboard">Ínicio</a>
+    <a href="#/pacientes">Pacientes</a>
+    <a href="#/agenda">Agenda</a>
+    <a href="#/financeiro">Financeiro</a>
+    <button id="btn-voltar-login" class="link-like">Voltar</button>
+  </nav>
+</header>
+
+<main class="container" id="app">
+
+  <!-- LOGIN -->
+  <section id="page-login" class="card">
+    <div style="margin-bottom:8px">
+      <h3>Login</h3>
+      <label for="login-user">Usuário</label>
+      <input id="login-user" value="" />
+      <label for="login-pass">Senha</label>
+      <input id="login-pass" type="password" value="" />
+    </div>
+    <div style="display:flex;gap:10px;margin-top:12px">
+      <button id="btn-login">Entrar</button>
+    </div>
+  </section>
+
+  <!-- DASHBOARD -->
+  <section id="page-dashboard" class="hidden">
+    <div class="topline">
+      <div id="welcome" class="muted"></div>
+    </div>
+
+    <div class="grid">
+      <div>
+        <div class="card" style="margin-bottom:12px">
+          <h3 style="margin:0 0 8px 0">Resumo rápido</h3>
+          <div style="display:flex;gap:12px">
+            <div style="flex:1;padding:12px;background:#fbfeff;border-radius:8px">
+              <div class="muted">Pacientes</div>
+              <div id="count-patients" style="font-size:22px;font-weight:700">0</div>
+            </div>
+            <div style="flex:1;padding:12px;background:#fbfeff;border-radius:8px">
+              <div class="muted">Consultas agendadas</div>
+              <div id="count-appointments" style="font-size:22px;font-weight:700">0</div>
+            </div>
+            <div style="flex:1;padding:12px;background:#fbfeff;border-radius:8px">
+              <div class="muted">Recebido (total)</div>
+              <div id="sum-received" style="font-size:22px;font-weight:700">R$ 0,00</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 style="margin:0 0 8px 0">Atendimentos do dia</h3>
+          <table id="today-table">
+            <thead><tr><th>Hora</th><th>Paciente</th><th>Profissional</th><th>Ação</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <aside>
+        <div class="card" style="margin-bottom:12px">
+          <p style="margin:10px 0"><button onclick="navigate('#/pacientes')">Gerenciar Pacientes</button></p>
+          <p style="margin:10px 0"><button onclick="navigate('#/agenda')">Agendar Consulta</button></p>
+          <p style="margin:10px 0"><button onclick="navigate('#/financeiro')">Registrar Pagamento</button></p>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <h4 style="margin:0 0 8px 0">Notas</h4>
+          <textarea id="notes-box" rows="6" placeholder="Escreva suas anotações aqui..." style="width:100%;padding:10px;border-radius:8px;border:1px solid #d0d7dd"></textarea>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button id="save-notes">Salvar anotação</button>
+            <button id="clear-notes" class="link-like">Limpar</button>
+          </div>
+          <p class="muted" style="margin:8px 0 0 0;font-size:12px"></p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- PACIENTES -->
+  <section id="page-pacientes" class="hidden">
+    <div class="topline">
+      <h2>Pacientes</h2>
+      <div>
+        <button id="btn-new-patient">Novo paciente</button>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <input id="search-patient" placeholder="Buscar por nome ou CPF" style="max-width:420px" />
+        <div class="muted">Total: <span id="total-patients">0</span></div>
+      </div>
+
+      <table id="patients-table">
+        <thead><tr><th>Nome</th><th>Telefone</th><th>Data Nascimento</th><th>CPF</th><th>Ações</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <!-- modal paciente -->
+    <div id="modal-patient" class="card hidden">
+      <h3 id="modal-title">Novo Paciente</h3>
+      <input id="p-id" type="hidden" />
+      <label>Nome</label><input id="p-nome" />
+      <div style="display:flex;gap:8px">
+        <div style="flex:1"><label>Telefone</label><input id="p-telefone" /></div>
+        <div style="flex:1"><label>CPF</label><input id="p-cpf" /></div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <div style="flex:1"><label>Data Nascimento</label><input id="p-nascimento" placeholder="DD/MM/AAAA" /></div>
+        <div style="flex:1"><label>Endereço</label><input id="p-endereco" /></div>
+      </div>
+      <label>Histórico / Alergias</label><textarea id="p-historico" rows="3"></textarea>
+      <div style="margin-top:8px;display:flex;gap:8px">
+        <button id="save-patient">Salvar</button>
+        <button id="cancel-patient" class="link-like">Cancelar</button>
+      </div>
+    </div>
+
+    <!-- prontuario -->
+    <div id="modal-prontuario" class="card hidden" style="margin-top:12px">
+      <h3>Prontuário: <span id="prontuario-nome"></span></h3>
+      <textarea id="prontuario-nova" rows="3" placeholder="Adicionar evolução"></textarea>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <input id="prontuario-profissional" placeholder="Profissional" />
+        <button id="add-evolution">Adicionar</button>
+      </div>
+      <div style="margin-top:12px">
+        <h4>Evoluções</h4>
+        <ul id="prontuario-list"></ul>
+      </div>
+      <div style="margin-top:8px"><button id="close-prontuario" class="link-like">Fechar</button></div>
+    </div>
+  </section>
+
+  <!-- AGENDA -->
+  <section id="page-agenda" class="hidden">
+    <div class="topline">
+      <h2>Agenda</h2>
+      <div><button id="btn-new-appointment">Novo agendamento</button></div>
+    </div>
+
+    <div class="card">
+      <h4>Agendamentos</h4>
+      <table id="appointments-table">
+        <thead><tr><th>Data</th><th>Hora</th><th>Paciente</th><th>Profissional</th><th>Ações</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div id="modal-appointment" class="card hidden" style="margin-top:12px;max-width:520px">
+      <h3>Agendar Consulta</h3>
+      <label>Paciente</label><select id="a-paciente"></select>
+      <div style="display:flex;gap:8px">
+        <div style="flex:1"><label>Data</label><input id="a-data" placeholder="DD/MM/AAAA" /></div>
+        <div style="flex:1"><label>Hora</label><input id="a-hora" placeholder="HH:MM" /></div>
+      </div>
+      <label>Profissional</label><input id="a-profissional" />
+      <label>Valor (R$)</label><input id="a-valor" />
+      <div style="margin-top:8px;display:flex;gap:8px"><button id="save-appointment">Salvar</button><button id="cancel-appointment" class="link-like">Cancelar</button></div>
+    </div>
+  </section>
+
+  <!-- FINANCEIRO -->
+  <section id="page-financeiro" class="hidden">
+    <div class="topline">
+      <h2>Financeiro</h2>
+      <div><button id="btn-new-payment">Registrar pagamento</button></div>
+    </div>
+
+    <div class="card" style="margin-bottom:12px">
+      <h4>Movimentações</h4>
+      <table id="payments-table">
+        <thead><tr><th>Data</th><th>Paciente</th><th>Descrição</th><th>Valor</th><th>Status</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div id="modal-payment" class="card hidden" style="margin-top:12px;max-width:520px">
+      <h3>Registrar Pagamento</h3>
+      <label>Paciente</label><select id="pay-paciente"></select>
+      <label>Data</label><input id="pay-data" placeholder="DD/MM/AAAA"/>
+      <label>Descrição</label><input id="pay-desc" />
+      <label>Valor</label><input id="pay-valor" />
+      <label>Status</label><select id="pay-status"><option value="recebido">Recebido</option><option value="pendente">Pendente</option></select>
+      <div style="margin-top:8px;display:flex;gap:8px"><button id="save-payment">Salvar</button><button id="cancel-payment" class="link-like">Cancelar</button></div>
+    </div>
+
+    <div class="card" style="margin-top:12px">
+      <h4>Relatório Simples</h4>
+      <div style="display:flex;gap:8px">
+        <div style="flex:1"><label>Data inicial</label><input id="report-from" placeholder="DD/MM/AAAA" /></div>
+        <div style="flex:1"><label>Data final</label><input id="report-to" placeholder="DD/MM/AAAA" /></div>
+      </div>
+      <div style="margin-top:8px"><button id="btn-gen-report">Gerar relatório</button></div>
+      <div id="report-output" style="margin-top:12px"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  © 2025 TechSmile 
+</footer>
+
+<script>
+/* ============================
+   NOTAS / ANOTAÇÕES (localStorage)
+   ============================ */
+const NOTES_KEY = "ts_notes_v1";
+function loadNotes(){
+  const saved = localStorage.getItem(NOTES_KEY);
+  if(saved !== null && document.getElementById('notes-box')) document.getElementById('notes-box').value = saved;
+}
+function initNotes(){
+  const btnSave = document.getElementById('save-notes');
+  const btnClear = document.getElementById('clear-notes');
+  if(btnSave) btnSave.addEventListener('click', ()=>{
+    const text = document.getElementById('notes-box').value;
+    localStorage.setItem(NOTES_KEY, text);
+    alert('Anotação salva!');
+  });
+  if(btnClear) btnClear.addEventListener('click', ()=>{
+    if(!confirm('Limpar todas as notas?')) return;
+    document.getElementById('notes-box').value = '';
+    localStorage.removeItem(NOTES_KEY);
+  });
+}
+
+/* ============================
+   Persistence / DB (localStorage)
+   ============================ */
+const STORAGE = {
+  USERS: 'ts_users_v1',
+  PATIENTS: 'ts_patients_v1',
+  APPTS: 'ts_appts_v1',
+  PAYS: 'ts_pays_v1',
+  SESSION: 'ts_session_v1'
+};
+
+const dbLoad = (key, defaultVal) => {
+  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : defaultVal; }
+  catch(e){ return defaultVal; }
+};
+const dbSave = (key, val) => localStorage.setItem(key, JSON.stringify(val));
+
+const DB = {
+  users: dbLoad(STORAGE.USERS, [
+    {username:'admin', password:'123', name:'Administrador'},
+    {username:'recepcao', password:'123', name:'Recepção'}
+  ]),
+  patients: dbLoad(STORAGE.PATIENTS, []),
+  appts: dbLoad(STORAGE.APPTS, []),
+  pays: dbLoad(STORAGE.PAYS, []),
+  session: dbLoad(STORAGE.SESSION, null)
+};
+function persistAll(){ dbSave(STORAGE.USERS, DB.users); dbSave(STORAGE.PATIENTS, DB.patients); dbSave(STORAGE.APPTS, DB.appts); dbSave(STORAGE.PAYS, DB.pays); dbSave(STORAGE.SESSION, DB.session); }
+
+/* ============================
+   Navigation (hash) & routing
+   ============================ */
+function hideAll(){ document.querySelectorAll('main section').forEach(s=>s.classList.add('hidden')); }
+function show(id){ const el = document.getElementById(id); if(el) el.classList.remove('hidden'); }
+function navigate(hash){ location.hash = hash; router(); }
+window.addEventListener('hashchange', router);
+
+function router(){
+  const h = location.hash || '#/login';
+  hideAll();
+  if(!DB.session && h !== '#/login'){ show('page-login'); return; }
+  if(h.startsWith('#/dashboard')) show('page-dashboard');
+  else if(h.startsWith('#/pacientes')) show('page-pacientes');
+  else if(h.startsWith('#/agenda')) show('page-agenda');
+  else if(h.startsWith('#/financeiro')) show('page-financeiro');
+  else show('page-login');
+  renderAll();
+}
+
+/* ============================
+   Helpers
+   ============================ */
+const uid = (p='id') => p + '_' + Math.random().toString(36).slice(2,9);
+const todayISO = () => new Date().toISOString().slice(0,10);
+const fmtMoney = v => 'R$ ' + Number(v||0).toFixed(2).replace('.',',');
+
+/* ============================
+   Login
+   ============================ */
+document.getElementById('btn-login').addEventListener('click', () => {
+  const u = document.getElementById('login-user').value.trim();
+  const p = document.getElementById('login-pass').value;
+  const user = DB.users.find(x => x.username === u && x.password === p);
+  if(!user){ alert('Credenciais inválidas'); return; }
+  DB.session = { username: user.username, name: user.name };
+  persistAll();
+  navigate('#/dashboard');
+});
+document.getElementById('btn-voltar-login').addEventListener('click', () => {
+  DB.session = null; persistAll(); navigate('#/login');
+});
+
+/* ============================
+   Render (dashboard, lists)
+   ============================ */
+function renderAll(){
+  // notas
+  loadNotes();
+
+  // welcome
+  if(DB.session) document.getElementById('welcome').innerText = `Olá, Dr. ${DB.session.name}`;
+
+  // counts
+  document.getElementById('count-patients').innerText = DB.patients.length;
+  document.getElementById('count-appointments').innerText = DB.appts.length;
+  const sumReceived = DB.pays.filter(p=>p.status==='recebido').reduce((s,i)=>s+Number(i.valor||0),0);
+  document.getElementById('sum-received').innerText = fmtMoney(sumReceived);
+
+  // today table
+  const tbodyToday = document.querySelector('#today-table tbody'); if(tbodyToday) tbodyToday.innerHTML = '';
+  const today = todayISO();
+  DB.appts.filter(a=>a.data===today).sort((a,b)=>a.hora.localeCompare(b.hora)).forEach(a=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${a.hora}</td><td>${a.pacienteNome}</td><td>${a.profissional}</td><td><button onclick="openProntuario('${a.pacienteId}')">Prontuário</button></td>`;
+    tbodyToday.appendChild(tr);
+  });
+
+  // patients table
+  const tbodyP = document.querySelector('#patients-table tbody'); if(tbodyP) tbodyP.innerHTML = '';
+  DB.patients.forEach(p=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${p.nome}</td><td>${p.telefone||''}</td><td>${p.nascimento||''}</td><td>${p.cpf||''}</td>
+      <td>
+        <button onclick="editPatient('${p.id}')">Editar</button>
+        <button onclick="openProntuario('${p.id}')">Prontuário</button>
+        <button onclick="deletePatient('${p.id}')">Excluir</button>
+      </td>`;
+    tbodyP.appendChild(tr);
+  });
+  document.getElementById('total-patients').innerText = DB.patients.length;
+
+  // appointments
+  const tbodyA = document.querySelector('#appointments-table tbody'); if(tbodyA) tbodyA.innerHTML = '';
+  DB.appts.slice().sort((a,b)=> (a.data+a.hora).localeCompare(b.data+b.hora)).forEach(a=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${a.data}</td><td>${a.hora}</td><td>${a.pacienteNome}</td><td>${a.profissional}</td><td><button onclick="deleteAppointment('${a.id}')">Cancelar</button></td>`;
+    tbodyA.appendChild(tr);
+  });
+
+  // payments
+  const tbodyPay = document.querySelector('#payments-table tbody'); if(tbodyPay) tbodyPay.innerHTML = '';
+  DB.pays.slice().sort((a,b)=> b.data.localeCompare(a.data)).forEach(p=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${p.data}</td><td>${p.pacienteNome||''}</td><td>${p.descricao||''}</td><td>${fmtMoney(p.valor)}</td><td>${p.status}</td>`;
+    tbodyPay.appendChild(tr);
+  });
+
+  // ensure selects updated
+  populatePatientSelects();
+}
+
+/* ============================
+   Patients CRUD & prontuário
+   ============================ */
+document.getElementById('btn-new-patient').addEventListener('click', ()=> openPatientModal());
+document.getElementById('cancel-patient').addEventListener('click', ()=> document.getElementById('modal-patient').classList.add('hidden'));
+document.getElementById('save-patient').addEventListener('click', savePatient);
+document.getElementById('search-patient').addEventListener('input', function(){ filterPatients(this.value) });
+
+function openPatientModal(patient){
+  const modal = document.getElementById('modal-patient');
+  modal.classList.remove('hidden');
+  document.getElementById('modal-title').innerText = patient ? 'Editar Paciente' : 'Novo Paciente';
+  document.getElementById('p-id').value = patient?.id || '';
+  document.getElementById('p-nome').value = patient?.nome || '';
+  document.getElementById('p-telefone').value = patient?.telefone || '';
+  document.getElementById('p-cpf').value = patient?.cpf || '';
+  document.getElementById('p-nascimento').value = patient?.nascimento || '';
+  document.getElementById('p-endereco').value = patient?.endereco || '';
+  document.getElementById('p-historico').value = patient?.historicoText || '';
+}
+
+function savePatient(){
+  const idField = document.getElementById('p-id');
+  const id = idField.value || uid('p');
+  const nome = document.getElementById('p-nome').value.trim();
+  if(!nome){ alert('Nome obrigatório'); return; }
+  const patient = {
+    id,
+    nome,
+    telefone: document.getElementById('p-telefone').value.trim(),
+    cpf: document.getElementById('p-cpf').value.trim(),
+    nascimento: document.getElementById('p-nascimento').value.trim(),
+    endereco: document.getElementById('p-endereco').value.trim(),
+    historico: [] // array de evoluções
+  };
+  const existingIndex = DB.patients.findIndex(p=>p.id===id);
+  if(existingIndex > -1){
+    // update in place to preserve reference (ensures UI updates)
+    DB.patients[existingIndex] = Object.assign({}, DB.patients[existingIndex], patient);
+  } else {
+    DB.patients.push(patient);
+  }
+  persistAll();
+  document.getElementById('modal-patient').classList.add('hidden');
+  renderAll();
+}
+
+function editPatient(id){
+  const p = DB.patients.find(x=>x.id===id);
+  if(!p) return alert('Paciente não encontrado');
+  openPatientModal(p);
+}
+
+function deletePatient(id){
+  if(!confirm('Excluir paciente e registros relacionados?')) return;
+  DB.patients = DB.patients.filter(x=>x.id!==id);
+  DB.appts = DB.appts.filter(a=>a.pacienteId!==id);
+  DB.pays = DB.pays.filter(x=>x.pacienteId!==id);
+  persistAll();
+  renderAll();
+}
+
+function filterPatients(q){
+  q = (q||'').toLowerCase();
+  document.querySelectorAll('#patients-table tbody tr').forEach(tr=>{
+    tr.style.display = tr.innerText.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
+/* Prontuário */
+function openProntuario(patientId){
+  const p = DB.patients.find(x=>x.id===patientId);
+  if(!p) return alert('Paciente não encontrado');
+  document.getElementById('prontuario-nome').innerText = p.nome;
+  document.getElementById('prontuario-nova').value = '';
+  document.getElementById('prontuario-profissional').value = DB.session?.name || '';
+  const ul = document.getElementById('prontuario-list'); ul.innerHTML = '';
+  (p.historico||[]).slice().reverse().forEach(h=>{
+    const li = document.createElement('li');
+    li.innerHTML = `<strong>${h.data} — ${h.profissional}</strong>: ${h.text}`;
+    ul.appendChild(li);
+  });
+  document.getElementById('modal-prontuario').classList.remove('hidden');
+  document.getElementById('modal-prontuario').dataset.pid = patientId;
+}
+document.getElementById('add-evolution').addEventListener('click', ()=>{
+  const pid = document.getElementById('modal-prontuario').dataset.pid;
+  const p = DB.patients.find(x=>x.id===pid);
+  if(!p) return;
+  const txt = document.getElementById('prontuario-nova').value.trim();
+  const prof = document.getElementById('prontuario-profissional').value.trim() || DB.session?.name || '---';
+  if(!txt) return alert('Adicione texto ao prontuário');
+  p.historico = p.historico || [];
+  p.historico.push({id: uid('h'), data: todayISO(), profissional: prof, text: txt});
+  persistAll();
+  openProntuario(pid);
+});
+document.getElementById('close-prontuario').addEventListener('click', ()=> document.getElementById('modal-prontuario').classList.add('hidden'));
+
+/* ============================
+   Agenda (appointments)
+   ============================ */
+document.getElementById('btn-new-appointment').addEventListener('click', openAppointmentModal);
+document.getElementById('cancel-appointment').addEventListener('click', ()=> document.getElementById('modal-appointment').classList.add('hidden'));
+document.getElementById('save-appointment').addEventListener('click', saveAppointment);
+
+function populatePatientSelects(){
+  const sel = document.getElementById('a-paciente');
+  const sel2 = document.getElementById('pay-paciente');
+  if(sel) sel.innerHTML = DB.patients.map(p=>`<option value="${p.id}">${p.nome}</option>`).join('');
+  if(sel2) sel2.innerHTML = DB.patients.map(p=>`<option value="${p.id}">${p.nome}</option>`).join('');
+}
+
+function openAppointmentModal(){
+  if(DB.patients.length===0){ alert('Cadastre pelo menos um paciente antes de agendar.'); return; }
+  populatePatientSelects();
+  document.getElementById('a-data').value = todayISO();
+  document.getElementById('a-hora').value = '';
+  document.getElementById('modal-appointment').classList.remove('hidden');
+}
+function saveAppointment(){
+  const pid = document.getElementById('a-paciente').value;
+  const data = document.getElementById('a-data').value;
+  const hora = document.getElementById('a-hora').value;
+  const prof = document.getElementById('a-profissional').value;
+  const valor = parseFloat(document.getElementById('a-valor').value||0);
+  const paciente = DB.patients.find(x=>x.id===pid);
+  if(!paciente) return alert('Escolha um paciente');
+  const ap = {id: uid('a'), pacienteId: pid, pacienteNome: paciente.nome, data, hora, profissional: prof, valor};
+  DB.appts.push(ap);
+  persistAll();
+  document.getElementById('modal-appointment').classList.add('hidden');
+  renderAll();
+}
+function deleteAppointment(id){
+  if(!confirm('Cancelar este agendamento?')) return;
+  DB.appts = DB.appts.filter(x=>x.id!==id);
+  persistAll();
+  renderAll();
+}
+
+/* ============================
+   Financeiro (payments + report)
+   ============================ */
+document.getElementById('btn-new-payment').addEventListener('click', ()=>{
+  if(DB.patients.length===0){ alert('Cadastre pelo menos um paciente antes de registrar pagamento.'); return; }
+  populatePatientSelects();
+  document.getElementById('pay-data').value = todayISO();
+  document.getElementById('modal-payment').classList.remove('hidden');
+});
+document.getElementById('cancel-payment').addEventListener('click', ()=> document.getElementById('modal-payment').classList.add('hidden'));
+document.getElementById('save-payment').addEventListener('click', savePayment);
+
+function savePayment(){
+  const pid = document.getElementById('pay-paciente').value;
+  const data = document.getElementById('pay-data').value;
+  const desc = document.getElementById('pay-desc').value.trim();
+  const valor = parseFloat(document.getElementById('pay-valor').value||0);
+  const status = document.getElementById('pay-status').value;
+  const paciente = DB.patients.find(x=>x.id===pid);
+  const rec = {id: uid('pay'), pacienteId: pid, pacienteNome: paciente?.nome||'', data, descricao: desc, valor, status};
+  DB.pays.push(rec);
+  persistAll();
+  document.getElementById('modal-payment').classList.add('hidden');
+  renderAll();
+}
+
+document.getElementById('btn-gen-report').addEventListener('click', ()=>{
+  const from = document.getElementById('report-from').value;
+  const to = document.getElementById('report-to').value;
+  if(!from || !to) return alert('Informe intervalo de datas');
+  const filtered = DB.pays.filter(p=> p.data >= from && p.data <= to);
+  const total = filtered.reduce((s,i)=>s + Number(i.valor||0), 0);
+  const received = filtered.filter(p=>p.status==='recebido').reduce((s,i)=>s + Number(i.valor||0),0);
+  const pending = filtered.filter(p=>p.status==='pendente').reduce((s,i)=>s + Number(i.valor||0),0);
+  const out = document.getElementById('report-output');
+  out.innerHTML = `<p>Total lançamentos: ${filtered.length}</p>
+    <p>Total (todos): ${fmtMoney(total)}</p>
+    <p>Recebido: ${fmtMoney(received)}</p>
+    <p>Pendente: ${fmtMoney(pending)}</p>`;
+});
+
+/* ============================
+   Seed demo data if empty
+   ============================ */
+function seedIfEmpty(){
+  if(DB.patients.length===0){
+    DB.patients.push({id:uid('p'), nome:'Maria Silva', telefone:'(85) 99999-1111', cpf:'123.456.789-00', nascimento:'1980-02-10', endereco:'Rua A, 123', historico:[]});
+    DB.patients.push({id:uid('p'), nome:'João Souza', telefone:'(85) 98888-2222', cpf:'987.654.321-00', nascimento:'1990-07-05', endereco:'Av. B, 45', historico:[]});
+  }
+  if(DB.appts.length===0){
+    DB.appts.push({id:uid('a'), pacienteId:DB.patients[0].id, pacienteNome:DB.patients[0].nome, data: todayISO(), hora:'09:00', profissional:'Dr. Ricardo', valor:120});
+  }
+  if(DB.pays.length===0){
+    DB.pays.push({id:uid('pay'), pacienteId:DB.patients[0].id, pacienteNome:DB.patients[0].nome, data: todayISO(), descricao:'Consulta', valor:120, status:'recebido'});
+  }
+  persistAll();
+}
+seedIfEmpty();
+
+/* Start: init helpers and router */
+initNotes();
+router();
+
+/* Expose functions used by inline handlers */
+window.navigate = navigate;
+window.openProntuario = openProntuario;
+window.editPatient = editPatient;
+window.deletePatient = deletePatient;
+window.deleteAppointment = deleteAppointment;
+</script>
+
+</body>
+</html>
