@@ -291,7 +291,7 @@
 </main>
 
 <footer>
-  © 2025 TechSmile 
+  © 2025 TechSmile - Sorrir é evolução.
 </footer>
 
 <script>
@@ -335,11 +335,25 @@ const dbLoad = (key, defaultVal) => {
 };
 const dbSave = (key, val) => localStorage.setItem(key, JSON.stringify(val));
 
+const DEFAULT_USERS = [
+  {username:'admin', password:'123', name:'Administrador'},
+  {username:'drricardo', password:'123', name:'Dr. Ricardo'},
+  {username:'dentista2', password:'123', name:'Dentista 2'},
+  {username:'secretaria', password:'123', name:'Secretaria'}
+];
+const usersLoaded = dbLoad(STORAGE.USERS, null);
+let mergedUsers;
+if(Array.isArray(usersLoaded)){
+  mergedUsers = [...usersLoaded];
+  DEFAULT_USERS.forEach(d => {
+    if(!mergedUsers.some(u => u.username === d.username)) mergedUsers.push(d);
+  });
+} else {
+  mergedUsers = [...DEFAULT_USERS];
+}
+
 const DB = {
-  users: dbLoad(STORAGE.USERS, [
-    {username:'admin', password:'123', name:'Administrador'},
-    {username:'recepcao', password:'123', name:'Recepção'}
-  ]),
+  users: mergedUsers,
   patients: dbLoad(STORAGE.PATIENTS, []),
   appts: dbLoad(STORAGE.APPTS, []),
   pays: dbLoad(STORAGE.PAYS, []),
@@ -398,7 +412,7 @@ function renderAll(){
   loadNotes();
 
   // welcome
-  if(DB.session) document.getElementById('welcome').innerText = `Olá, Dr. ${DB.session.name}`;
+  if(DB.session) document.getElementById('welcome').innerText = `Olá, ${DB.session.name}`;
 
   // counts
   document.getElementById('count-patients').innerText = DB.patients.length;
@@ -475,7 +489,7 @@ function savePatient(){
   const id = idField.value || uid('p');
   const nome = document.getElementById('p-nome').value.trim();
   if(!nome){ alert('Nome obrigatório'); return; }
-  const patient = {
+  const patient  = {
     id,
     nome,
     telefone: document.getElementById('p-telefone').value.trim(),
