@@ -97,11 +97,13 @@ localStorage.setItem(key, JSON.stringify(valor));
 localStorage.getItem(key);
 
 Diagrama Simples da Arquitetura
+
 +----------------------------+
 | Camada de Apresentação     |
 | (HTML + CSS)               |
 | Interface do usuário       |
 +------------↓---------------+
+
 
 +----------------------------+
 | Camada de Lógica           |
@@ -109,11 +111,13 @@ Diagrama Simples da Arquitetura
 | Regras e funcionalidades   |
 +------------↓---------------+
 
+
 +----------------------------+
 | Camada de Persistência     |
 | (LocalStorage)             |
 | Armazenamento de dados     |
 +----------------------------+
+
 Tecnologias Utilizadas
 As tecnologias utilizadas no desenvolvimento do sistema foram:
 HTML5
@@ -148,3 +152,4 @@ Análise e Desenvolvimento de Sistemas
 
 Instituição:
 IFCE – Instituto Federal do Ceará
+
