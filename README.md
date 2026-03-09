@@ -153,3 +153,27 @@ Análise e Desenvolvimento de Sistemas
 Instituição:
 IFCE – Instituto Federal do Ceará
 
+
+
+## Containerização com Docker
+Para atender à atividade de containerização, o projeto agora possui configuração para executar frontend e backend com Docker.
+
+### Arquivos adicionados
+- `backend/Dockerfile`: cria a imagem do servidor Node.js da aplicação.
+- `frontend/Dockerfile`: cria a imagem do frontend usando Nginx para servir os arquivos estáticos.
+- `docker-compose.yml`: orquestra os dois serviços (`frontend` e `backend`).
+- `.dockerignore`: evita envio de arquivos desnecessários para o contexto de build.
+
+### Como executar com Docker
+1. Na raiz do projeto, execute:
+   ```bash
+   docker compose up --build
+   ```
+2. Acesse os serviços:
+   - Frontend: `http://localhost:8080`
+   - Backend: `http://localhost:3000`
+
+### Como parar os containers
+```bash
+docker compose down
+```
