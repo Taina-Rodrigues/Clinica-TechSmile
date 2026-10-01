@@ -1,0 +1,26 @@
+{
+  "name": "clinica-techsmile",
+  "version": "1.0.0",
+  "description": "TechSmile – Sistema Monolítico em Camadas Descrição Geral do Sistema",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Taina-Rodrigues/Clinica-TechSmile.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Taina-Rodrigues/Clinica-TechSmile/issues"
+  },
+  "homepage": "https://github.com/Taina-Rodrigues/Clinica-TechSmile#readme",
+  "devDependencies": {
+    "@commitlint/cli": "^21.2.3",
+    "@commitlint/config-conventional": "^21.2.3"
+  }
+}
