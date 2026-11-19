@@ -76,7 +76,18 @@ Tests:       2 failed, 1 passed, 3 total
 
 Com a validação restaurada, os 3 testes voltaram a passar. Isso comprova que o CT-02 e o CT-03 detectam a quebra da regra de negócio.
 
-(Inserir aqui os prints do terminal vermelho e do terminal verde.)
+PRINTS:
+Falhas
+
+<img width="687" height="580" alt="Captura de tela 2026-11-18 204538" src="https://github.com/user-attachments/assets/2c2846be-c474-40c9-9143-0174b3573a4a" />
+
+<img width="667" height="315" alt="Captura de tela 2026-11-18 204554" src="https://github.com/user-attachments/assets/8e77f61d-26e5-4333-b410-119be16ada6f" />
+
+
+Acertos
+
+<img width="662" height="347" alt="Captura de tela 2026-11-18 204719" src="https://github.com/user-attachments/assets/7dd895d9-1a62-4bfa-ad5d-3d92082f2d0a" />
+
 
 6. Rastreabilidade: documentação x código
 Contrato	Teste automatizado (pacientes.test.js)	Status esperado
